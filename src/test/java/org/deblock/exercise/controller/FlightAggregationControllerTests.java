@@ -1,5 +1,6 @@
 package org.deblock.exercise.controller;
 
+import org.deblock.exercise.entity.FlightSearchResponse;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,8 @@ public class FlightAggregationControllerTests {
 
     @Test
     public void searchShouldReturnOk() throws Exception {
-        ResponseEntity<ArrayList> response = this.restTemplate.getForEntity("http://localhost:" + port + "/v1/search",
+        ResponseEntity<ArrayList> response = this.restTemplate.getForEntity(
+                "http://localhost:" + port + "/v1/search",
                 ArrayList.class);
         assertThat(response.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
     }
