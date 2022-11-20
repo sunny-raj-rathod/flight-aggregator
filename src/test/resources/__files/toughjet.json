@@ -1,0 +1,35 @@
+{
+    "responses" : 
+    [
+        {
+            "carrier": "Ryan Air",
+            "basePrice": 200.00,
+            "tax": 10.00,
+            "discount": 5.00,
+            "departureAirportName": "LHR",
+            "arrivalAirportName": "AMS",
+            "outboundDateTime": "2022-11-19T23:51:25.655816Z",
+            "inboundDateTime": "2022-11-22T23:51:25.654931Z"
+        },
+        {
+            "carrier": "Easy Air",
+            "basePrice": 300.00,
+            "tax": 5.00,
+            "discount": 5.00,
+            "departureAirportName": "LHR",
+            "arrivalAirportName": "AMS",
+            "outboundDateTime": "2022-11-19T23:51:25.655816Z",
+            "inboundDateTime": "2022-11-22T23:51:25.654931Z"
+        },
+        {
+            "carrier": "Qatar Air",
+            "basePrice": 400.00,
+            "tax": 8.00,
+            "discount": 3.50,
+            "departureAirportName": "LHR",
+            "arrivalAirportName": "AMS",
+            "outboundDateTime": "2022-11-19T23:51:25.655816Z",
+            "inboundDateTime": "2022-11-22T23:51:25.654931Z"
+        }
+    ]
+}

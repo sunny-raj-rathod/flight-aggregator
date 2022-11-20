@@ -1,16 +1,28 @@
 package org.deblock.exercise.controller;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.List;
 
-import org.deblock.exercise.entity.FlightSearchResponse;
+import org.deblock.exercise.entity.FlightSearchRequestParameters;
+import org.deblock.exercise.entity.FlightSearchResult;
+import org.deblock.exercise.entity.FlightDetail;
+import org.deblock.exercise.repository.IFlightSearchRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class FlightAggregationController {
+
+    @Autowired
+    IFlightSearchRepository repository;
 
     @RequestMapping("/")
     public String home() {
@@ -18,17 +30,19 @@ public class FlightAggregationController {
     }
 
     @RequestMapping(value = "/v1/search")
-    public ResponseEntity<ArrayList<FlightSearchResponse>> getFlights() {
-        FlightSearchResponse searchResponse = new FlightSearchResponse();
-        searchResponse.setAirline("Ryan Air");
-        searchResponse.setSupplier("ToughJet");
-        searchResponse.setFare(200.00);
-        searchResponse.setDepartureAirportCode("LHR");
-        searchResponse.setDestinationAirportCode("AMS");
-        searchResponse.setDepartureDate(LocalDateTime.now());
-        searchResponse.setArrivalDate(LocalDateTime.now());
-        ArrayList<FlightSearchResponse> list = new ArrayList<>();
-        list.add(searchResponse);
-        return new ResponseEntity<>(list, HttpStatus.OK);
+    public ResponseEntity<FlightSearchResult> getFlights(
+            @RequestBody FlightSearchRequestParameters searchParameters,
+            @RequestParam(defaultValue = "0") Integer pageNo,
+            @RequestParam(defaultValue = "10") Integer pageSize,
+            @RequestParam(defaultValue = "price") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortOrder) {
+
+        Sort sort = Sort.by(sortOrder.equalsIgnoreCase("asc") ? Direction.ASC : Direction.DESC, sortBy);
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        List<FlightDetail> flightDetails = repository.fetchFlights(searchParameters, pageable);
+        FlightSearchResult flightSearchResult = new FlightSearchResult();
+        flightSearchResult.setResponses(flightDetails);
+
+        return new ResponseEntity<>(flightSearchResult, HttpStatus.OK);
     }
 }

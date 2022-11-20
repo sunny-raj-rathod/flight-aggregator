@@ -1,0 +1,32 @@
+{
+    "responses" : 
+    [
+        {
+            "airline": "Jet Air",
+            "price": 200.0,
+            "cabinclass": "E",
+            "departureAirportCode": "LHR",
+            "destinationAirportCode": "AMS",
+            "departureDate": "2022-11-19T23:51:25.654930Z",
+            "arrivalDate": "2022-11-22T23:51:25.655814Z"
+        },
+        {
+            "airline": "British Air",
+            "price": 400.0,
+            "cabinclass": "B",
+            "departureAirportCode": "LHR",
+            "destinationAirportCode": "AMS",
+            "departureDate": "2022-11-19T23:51:25.654930Z",
+            "arrivalDate": "2022-11-22T23:51:25.655814Z"
+        },
+        {
+            "airline": "France Air",
+            "price": 300.0,
+            "cabinclass": "E",
+            "departureAirportCode": "LHR",
+            "destinationAirportCode": "AMS",
+            "departureDate": "2022-11-19T23:51:25.654930Z",
+            "arrivalDate": "2022-11-22T23:51:25.655814Z"
+        }
+    ]
+}
