@@ -21,8 +21,8 @@ public class FlightSearchRepositoryImpl implements IFlightSearchRepository {
         List<FlightSupplierIntegrationBase> suppliers = new ArrayList<FlightSupplierIntegrationBase>();
         suppliers.add(new CrazyAirFlightSearchClient());
         suppliers.add(new ToughJetFlightSearchClient());
-        suppliers.parallelStream()
-                .forEach(supplier -> supplier.findFlights(searchParameters, flightDetails));
+        // Issue with parallel stream
+        suppliers.forEach(supplier -> supplier.findFlights(searchParameters, flightDetails));
         // TODO: how to page and sort?
         return flightDetails;
     }

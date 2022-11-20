@@ -2,7 +2,6 @@ package org.deblock.exercise.controller;
 
 import org.deblock.exercise.entity.FlightSearchRequestParameters;
 import org.deblock.exercise.entity.FlightSearchResult;
-import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,64 +27,59 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class FlightAggregationControllerTests {
 
-    @LocalServerPort
-    private int port;
+        @LocalServerPort
+        private int port;
 
-    @Autowired
-    private TestRestTemplate restTemplate;
+        @Autowired
+        private TestRestTemplate restTemplate;
 
-    WireMockServer wireMockServerCrazyAir;
+        WireMockServer wireMockServerCrazyAir;
 
-    WireMockServer wireMockServerToughJet;
+        WireMockServer wireMockServerToughJet;
 
-    public void setupWireMock() throws Exception {
-        wireMockServerCrazyAir = new WireMockServer(options().port(8001));
-        wireMockServerToughJet = new WireMockServer(options().port(8002));
-        wireMockServerCrazyAir.start();
-        wireMockServerToughJet.start();
-        wireMockServerCrazyAir.stubFor(WireMock.post("/v1/search")
-                .willReturn(WireMock.aResponse().withStatus(200).withHeader("Content-Type", "application/json")
-                        .withBodyFile("crazyair.json")));
-        wireMockServerToughJet.stubFor(WireMock.post("/v1/search")
-                .willReturn(WireMock.aResponse().withStatus(200).withHeader("Content-Type", "application/json")
-                        .withBodyFile("toughjet.json")));
-    }
+        public void setupWireMock() throws Exception {
+                wireMockServerCrazyAir = new WireMockServer(options().port(8001));
+                wireMockServerCrazyAir.start();
+                wireMockServerCrazyAir.stubFor(WireMock.post("/v1/search")
+                                .willReturn(WireMock.aResponse().withStatus(200)
+                                                .withHeader("Content-Type", "application/json")
+                                                .withBodyFile("crazyair.json")));
+                wireMockServerToughJet = new WireMockServer(options().port(8002));
+                wireMockServerToughJet.start();
+                wireMockServerToughJet.stubFor(WireMock.post("/v1/search")
+                                .willReturn(WireMock.aResponse().withStatus(200)
+                                                .withHeader("Content-Type", "application/json")
+                                                .withBodyFile("toughjet.json")));
+        }
 
-    public void tearDownWireMock() throws Exception {
-        wireMockServerCrazyAir.shutdownServer();
-        wireMockServerToughJet.shutdownServer();
-    }
+        public void tearDownWireMock() throws Exception {
+                wireMockServerCrazyAir.shutdownServer();
+                wireMockServerToughJet.shutdownServer();
+        }
 
-    @Test
-    public void defaultShouldReturnDefaultMessage() throws Exception {
-        assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/",
-                String.class)).contains("Hello Deblock!");
-    }
+        @Test
+        public void defaultShouldReturnDefaultMessage() throws Exception {
+                assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/",
+                                String.class)).contains("Hello Deblock!");
+        }
 
-    @Test
-    public void searchShouldReturnOk() throws Exception {
-        this.setupWireMock();
-        String departureDate = DateTimeFormatter.ISO_LOCAL_DATE.format(LocalDate.now());
-        FlightSearchRequestParameters searchParameters = new FlightSearchRequestParameters();
-        searchParameters.setOrigin("AMS");
-        searchParameters.setDestination("LHR");
-        searchParameters.setNumberOfPassengers(1);
-        searchParameters.setDepartureDate(departureDate);
-        JSONObject parameters = new JSONObject();
-        parameters.put("origin", "AMS");
-        parameters.put("destination", "LHR");
-        parameters.put("numberOfPassengers", 1);
-        parameters.put("departureDate", departureDate);
-
-        RequestEntity<FlightSearchRequestParameters> requestEntity = new RequestEntity<FlightSearchRequestParameters>(
-                searchParameters, HttpMethod.POST,
-                URI.create("http://localhost:" + port + "/v1/search"));
-        ResponseEntity<FlightSearchResult> response = this.restTemplate.exchange(
-                requestEntity,
-                FlightSearchResult.class);
-        assertThat(response.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
-        assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().getResponses()).hasSize(6);
-        this.tearDownWireMock();
-    }
+        @Test
+        public void searchShouldReturnOkAndResult() throws Exception {
+                this.setupWireMock();
+                String departureDate = DateTimeFormatter.ISO_LOCAL_DATE.format(LocalDate.now());
+                FlightSearchRequestParameters searchParameters = new FlightSearchRequestParameters();
+                searchParameters.setOrigin("AMS");
+                searchParameters.setDestination("LHR");
+                searchParameters.setNumberOfPassengers(1);
+                searchParameters.setDepartureDate(departureDate);
+                RequestEntity<FlightSearchRequestParameters> requestEntity = new RequestEntity<FlightSearchRequestParameters>(
+                                searchParameters, HttpMethod.POST,
+                                URI.create("http://localhost:" + port + "/v1/search"));
+                ResponseEntity<FlightSearchResult> response = this.restTemplate.exchange(
+                                requestEntity,
+                                FlightSearchResult.class);
+                assertThat(response.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
+                assertThat(response.getBody().getResponses()).hasSize(6);
+                this.tearDownWireMock();
+        }
 }

@@ -6,6 +6,7 @@ import org.deblock.exercise.entity.FlightSearchRequestParameters;
 import org.deblock.exercise.entity.FlightSearchResult;
 import org.deblock.exercise.entity.FlightDetail;
 import org.deblock.exercise.repository.IFlightSearchRepository;
+import org.deblock.exercise.service.FlightAggregationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class FlightAggregationController {
 
     @Autowired
-    IFlightSearchRepository repository;
+    FlightAggregationService flightAggregationService;
 
     @RequestMapping("/")
     public String home() {
@@ -34,12 +35,13 @@ public class FlightAggregationController {
             @RequestBody FlightSearchRequestParameters searchParameters,
             @RequestParam(defaultValue = "0") Integer pageNo,
             @RequestParam(defaultValue = "10") Integer pageSize,
-            @RequestParam(defaultValue = "price") String sortBy,
+            @RequestParam(defaultValue = "fare") String sortBy,
             @RequestParam(defaultValue = "asc") String sortOrder) {
 
         Sort sort = Sort.by(sortOrder.equalsIgnoreCase("asc") ? Direction.ASC : Direction.DESC, sortBy);
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
-        List<FlightDetail> flightDetails = repository.fetchFlights(searchParameters, pageable);
+
+        List<FlightDetail> flightDetails = flightAggregationService.getFlights(searchParameters, pageable);
         FlightSearchResult flightSearchResult = new FlightSearchResult();
         flightSearchResult.setResponses(flightDetails);
 
