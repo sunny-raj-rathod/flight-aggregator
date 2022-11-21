@@ -1,5 +1,9 @@
 package org.deblock.exercise.integration.crazyair;
 
+import java.time.LocalDate;
+
+import org.springframework.format.annotation.DateTimeFormat;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,7 +17,9 @@ public class CrazyAirSearchRequest {
 
     private int passengerCount;
 
-    private String departureDate;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    private LocalDate departureDate;
 
-    private String returnDate;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    private LocalDate returnDate;
 }

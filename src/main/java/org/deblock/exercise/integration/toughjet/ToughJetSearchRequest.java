@@ -1,5 +1,9 @@
 package org.deblock.exercise.integration.toughjet;
 
+import java.time.LocalDate;
+
+import org.springframework.format.annotation.DateTimeFormat;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,7 +17,9 @@ public class ToughJetSearchRequest {
 
     private int numberOfAdults;
 
-    private String outboundDate;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    private LocalDate outboundDate;
 
-    private String inboundDate;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    private LocalDate inboundDate;
 }

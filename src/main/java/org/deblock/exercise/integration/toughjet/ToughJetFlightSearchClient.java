@@ -1,10 +1,6 @@
 package org.deblock.exercise.integration.toughjet;
 
 import java.net.URI;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.deblock.exercise.entity.FlightSearchRequestParameters;
@@ -42,13 +38,14 @@ public class ToughJetFlightSearchClient
     }
 
     public List<ToughJetFlightDetail> findFlightsImpl(ToughJetSearchRequest request) {
+        // TODO:URI to be moved to application.properties, unable to view property in
+        // tests
         RequestEntity<ToughJetSearchRequest> requestEntity = new RequestEntity<>(
                 request, HttpMethod.POST,
                 URI.create("http://localhost:8002/v1/search"));
         ResponseEntity<ToughJetFlightSearchResult> result = this.restTemplate.exchange(
                 requestEntity,
                 ToughJetFlightSearchResult.class);
-        // TODO: null handling.
         return result.getBody().getResponses();
     }
 
@@ -57,7 +54,7 @@ public class ToughJetFlightSearchClient
         fare = fare - ((fare * response.getDiscount()) / 100);
         FlightDetail flightDetail = new FlightDetail();
         flightDetail.setAirline(response.getCarrier());
-        flightDetail.setSupplier(SupplierEnum.TOUGHJET);// enum
+        flightDetail.setSupplier(SupplierEnum.TOUGHJET);
         flightDetail.setFare(fare);
         flightDetail.setDepartureAirportCode(response.getDepartureAirportName());
         flightDetail.setDestinationAirportCode(response.getArrivalAirportName());

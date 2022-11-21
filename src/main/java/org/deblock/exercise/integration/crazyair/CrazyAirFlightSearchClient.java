@@ -27,7 +27,6 @@ public class CrazyAirFlightSearchClient
         super(new RestTemplate());
     }
 
-    @Override
     public CrazyAirSearchRequest buildSearchRequest(FlightSearchRequestParameters request) {
         CrazyAirSearchRequest crazyAirSearchRequest = new CrazyAirSearchRequest();
         crazyAirSearchRequest.setDepartureDate(request.getDepartureDate());
@@ -39,21 +38,21 @@ public class CrazyAirFlightSearchClient
     }
 
     public List<CrazyAirFlightDetail> findFlightsImpl(CrazyAirSearchRequest request) {
+        // TODO:URI to be moved to application.properties, unable to view property in
+        // tests
         RequestEntity<CrazyAirSearchRequest> requestEntity = new RequestEntity<>(
                 request, HttpMethod.POST,
                 URI.create("http://localhost:8001/v1/search"));
         ResponseEntity<CrazyAirFlightSearchResult> result = this.restTemplate.exchange(
                 requestEntity,
                 CrazyAirFlightSearchResult.class);
-        // TODO: null handling.
         return result.getBody().getResponses();
     }
 
-    @Override
     public FlightDetail transformResponse(CrazyAirFlightDetail response) {
         FlightDetail flightSearchResponse = new FlightDetail();
         flightSearchResponse.setAirline(response.getAirline());
-        flightSearchResponse.setSupplier(SupplierEnum.CRAZYAIR);// enum
+        flightSearchResponse.setSupplier(SupplierEnum.CRAZYAIR);
         flightSearchResponse.setFare(response.getPrice());
         flightSearchResponse.setDepartureAirportCode(response.getDepartureAirportCode());
         flightSearchResponse.setDestinationAirportCode(response.getDestinationAirportCode());

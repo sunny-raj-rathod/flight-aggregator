@@ -18,6 +18,7 @@ public class FlightAggregationService {
     public List<FlightDetail> getFlights(
             FlightSearchRequestParameters searchParameters,
             Pageable pageable) {
+
         return repository.fetchFlights(searchParameters, pageable);
     }
 }

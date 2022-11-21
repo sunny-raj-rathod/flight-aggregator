@@ -2,6 +2,7 @@ package org.deblock.exercise.controller;
 
 import org.deblock.exercise.entity.FlightSearchRequestParameters;
 import org.deblock.exercise.entity.FlightSearchResult;
+import org.deblock.exercise.entity.FlightDetail;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +22,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.net.URI;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-public class FlightAggregationControllerTests {
+public class FlightAggregationControllerIntegrationTest {
 
         @LocalServerPort
         private int port;
@@ -66,12 +69,11 @@ public class FlightAggregationControllerTests {
         @Test
         public void searchShouldReturnOkAndResult() throws Exception {
                 this.setupWireMock();
-                String departureDate = DateTimeFormatter.ISO_LOCAL_DATE.format(LocalDate.now());
                 FlightSearchRequestParameters searchParameters = new FlightSearchRequestParameters();
                 searchParameters.setOrigin("AMS");
                 searchParameters.setDestination("LHR");
                 searchParameters.setNumberOfPassengers(1);
-                searchParameters.setDepartureDate(departureDate);
+                searchParameters.setDepartureDate(LocalDate.now());
                 RequestEntity<FlightSearchRequestParameters> requestEntity = new RequestEntity<FlightSearchRequestParameters>(
                                 searchParameters, HttpMethod.POST,
                                 URI.create("http://localhost:" + port + "/v1/search"));
@@ -79,7 +81,14 @@ public class FlightAggregationControllerTests {
                                 requestEntity,
                                 FlightSearchResult.class);
                 assertThat(response.getStatusCode()).isEqualByComparingTo(HttpStatus.OK);
-                assertThat(response.getBody().getResponses()).hasSize(6);
+                assertThat(response.getBody()).isNotNull();
+                List<FlightDetail> flightDetails = response.getBody().getResponses();
+                assertThat(flightDetails).hasSize(6);
+
+                List<Double> fares = flightDetails.stream().map(flightDetail -> flightDetail.getFare())
+                                .collect(Collectors.toList());
+                // fares are sorted
+                assertThat(fares).isSorted();
                 this.tearDownWireMock();
         }
 }
